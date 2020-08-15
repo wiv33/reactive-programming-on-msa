@@ -1,6 +1,7 @@
 package org.psawesome;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +16,7 @@ import lombok.RequiredArgsConstructor;
  * @see
  * @since 20. 8. 15. Saturday
  */
-@Getter
+@Data
 @RequiredArgsConstructor
 public class Image {
   private final String id;
