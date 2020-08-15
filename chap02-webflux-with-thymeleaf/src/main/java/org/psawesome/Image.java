@@ -19,6 +19,6 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 public class Image {
-  private final String id;
+  private final Integer id;
   private final String name;
 }
