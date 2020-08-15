@@ -42,8 +42,9 @@ subprojects {
     }
 
     dependencies {
-        implementation("org.projectlombok:lombok")
-
+        extra["lombokVersion"] = "1.18.4"
+        compileOnly("org.projectlombok:lombok:${extra["lombokVersion"]}")
+        annotationProcessor("org.projectlombok:lombok:${extra["lombokVersion"]}")
         // mockito, JSONassert, hamcrest, Assertj
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }

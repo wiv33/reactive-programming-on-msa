@@ -1,0 +1,8 @@
+# http --json -v POST localhost:8080/api/images id=10 name=foo
+POST http://localhost:8080/api/images
+Content-Type: application/json
+
+{
+  "id": 10,
+  "name": "foo"
+}
