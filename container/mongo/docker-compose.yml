@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+
+  ps_mongo:
+    image: mongo
+    hostname: my-mongo
+    ports:
+      - 27017:27017

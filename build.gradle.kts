@@ -63,3 +63,11 @@ project(":chap02-webflux-with-thymeleaf") {
         implementation("org.synchronoss.cloud:nio-multipart-parser:1.1.0")
     }
 }
+
+project(":chap03-mongo") {
+    dependencies {
+        implementation("org.springframework.boot:spring-boot-starter-webflux")
+        implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
+        implementation("org.synchronoss.cloud:nio-multipart-parser:1.1.0")
+    }
+}
