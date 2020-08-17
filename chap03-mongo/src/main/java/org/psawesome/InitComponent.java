@@ -24,12 +24,18 @@ public class InitComponent {
   @Bean
   CommandLineRunner setUp(ReactiveFluentMongoOperations operations) {
     return args -> {
+      operations.remove(Image.class)
+              .all()
+              .log("remove Image")
+              .subscribe();
+
       operations.insert(Image.class)
               .all(List.of(
                       new Image("1", "ps.png"),
                       new Image("2", "awesome.jpg"),
                       new Image("3", "body.jpg")
-              ));
+              ))
+      .subscribe();
 
       operations.query(Image.class)
               .all()

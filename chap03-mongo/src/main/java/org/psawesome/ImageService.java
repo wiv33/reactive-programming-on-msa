@@ -8,6 +8,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.mongodb.core.ReactiveFluentMongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -44,9 +47,10 @@ public class ImageService {
   public static final String UPLOAD_ROOT = "upload-dir";
   private final ResourceLoader resourceLoader;
   private final ImageRepository imageRepository;
+  private final ReactiveFluentMongoOperations operations;
 
   public Flux<Image> findAllImages() {
-    return imageRepository.findAll();
+    return imageRepository.findAll().log("findAll");
   }
 
   public Mono<Resource> findOneImage(String filename) {
@@ -120,4 +124,16 @@ public class ImageService {
     return imageRepository.findOne(example);
   }
 
+  public Mono<Image> operationsQuery() {
+    final Image e = new Image("e", "r.jpg");
+    final ExampleMatcher matcher = ExampleMatcher.matching()
+            .withIgnoreCase()
+            .withMatcher("name", startsWith())
+            .withIncludeNullValues();
+    final Example<Image> example = Example.of(e, matcher);
+
+    return operations.query(Image.class)
+            .matching(Query.query(Criteria.byExample(example)))
+            .one();
+  }
 }
