@@ -1,0 +1,7 @@
+#!/usr/bin/zsh
+
+kubectl apply -f service.yml
+kubectl apply -f statefulSet.yml
+
+
+
