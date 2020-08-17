@@ -19,6 +19,7 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 @SpringBootApplication
 public class ImagesApplication {
   public static void main(String[] args) {
+//    System.setProperty("-Dspring.profiles.active", "big");
     SpringApplication.run(ImagesApplication.class, args);
   }
 /*

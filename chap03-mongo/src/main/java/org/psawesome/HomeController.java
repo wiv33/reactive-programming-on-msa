@@ -5,6 +5,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -23,7 +24,9 @@ import java.io.IOException;
  * @see
  * @since 20. 8. 17. Monday
  */
+@Controller
 @RequiredArgsConstructor
+@RequestMapping("/")
 public class HomeController {
   private static final String BASE_PATH = "/images";
   private final String FILENAME = "{filename:.+}";

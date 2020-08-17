@@ -2,10 +2,14 @@ package org.psawesome;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.ReactiveFluentMongoOperations;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author ps [https://github.com/wiv33/reactive-programming-with-msa]
@@ -35,11 +39,21 @@ public class InitComponent {
                       new Image("2", "awesome.jpg"),
                       new Image("3", "body.jpg")
               ))
-      .subscribe();
+              .subscribe();
 
       operations.query(Image.class)
               .all()
               .subscribe(System.out::println);
     };
+  }
+
+  @Bean
+  @Profile("big")
+  CommandLineRunner setUpBigList(ReactiveFluentMongoOperations operations) {
+    return args -> operations.insert(Image.class)
+            .all(Stream.generate(() -> new Image(Instant.now().toString(), "ps-awesome.jpg" + Instant.now().getNano()))
+                    .limit(1000000)
+                    .collect(Collectors.toList()))
+            .subscribe();
   }
 }
