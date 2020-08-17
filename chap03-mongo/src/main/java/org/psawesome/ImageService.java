@@ -6,6 +6,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -19,6 +21,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
+
+import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.startsWith;
+
 
 /**
  * @author ps [https://github.com/wiv33/reactive-programming-with-msa]
@@ -101,6 +106,18 @@ public class ImageService {
       FileCopyUtils.copy("Test file2", new FileWriter(UPLOAD_ROOT + "/mybody.jpg"));
       FileCopyUtils.copy("Test file3", new FileWriter(UPLOAD_ROOT + "/psawesome.jpg"));
     };
+  }
+
+  public Mono<Image> testQuery() {
+    final Image d = new Image("d", "");
+    final ExampleMatcher matcher = ExampleMatcher.matching()
+            .withIgnoreCase()
+            .withMatcher("name", startsWith())
+            .withIncludeNullValues();
+
+    final Example<Image> example = Example.of(d, matcher);
+
+    return imageRepository.findOne(example);
   }
 
 }
