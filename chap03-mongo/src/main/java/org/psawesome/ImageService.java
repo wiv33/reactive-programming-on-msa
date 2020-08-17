@@ -60,27 +60,30 @@ public class ImageService {
   }
 
   public Mono<Void> createImage(Flux<FilePart> files) {
-    return files.flatMap(file -> {
-      final Mono<Image> save = imageRepository
-              .save(new Image(Instant.now().toString(), file.filename()));
+    return files
+            .log("createImage-files")
+            .flatMap(file -> {
+              final Mono<Image> save = imageRepository
+                      .save(new Image(Instant.now().toString(), file.filename()));
 
-      final Mono<Void> copy = Mono.just(Paths.get(UPLOAD_ROOT, file.filename()).toFile())
-              .log("createImage - pick target")
-              .map(destFile -> {
-                try {
-                  final boolean newFile = destFile.createNewFile();
-                  ImageService.log.info("check create file {}", newFile);
-                } catch (IOException e) {
-                  throw new RuntimeException(e);
-                }
-                return destFile;
-              })
-              .log("createImage-newFile")
-              .flatMap(file::transferTo)
-              .log("createImage-copy");
-
-      return Mono.when(save, copy);
-    }).then();
+              final Mono<Void> copy = Mono.just(Paths.get(UPLOAD_ROOT, file.filename()).toFile())
+                      .log("createImage - pick target")
+                      .map(destFile -> {
+                        try {
+                          final boolean newFile = destFile.createNewFile();
+                          ImageService.log.info("check create file {}", newFile);
+                        } catch (IOException e) {
+                          throw new RuntimeException(e);
+                        }
+                        return destFile;
+                      })
+                      .log("createImage-newFile")
+                      .flatMap(file::transferTo)
+                      .log("createImage-copy");
+              return Mono.when(save, copy);
+            })
+            .then()
+            .log("createImage - done");
   }
 
   public Mono<Void> deleteImage(String filename) {
