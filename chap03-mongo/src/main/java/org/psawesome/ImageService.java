@@ -89,16 +89,22 @@ public class ImageService {
   public Mono<Void> deleteImage(String filename) {
     final Mono<Void> deleteDatabase = imageRepository
             .findByName(filename)
-            .flatMap(imageRepository::delete);
+            .log("deleteImage-find")
+            .flatMap(imageRepository::delete)
+            .log("deleteImage-record");
 
-    final Mono<Void> deleteFile = Mono.fromRunnable(() -> {
+    final Mono<Object> deleteFile = Mono.fromRunnable(() -> {
       try {
         Files.deleteIfExists(Paths.get(UPLOAD_ROOT, filename));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-    });
-    return Mono.when(deleteDatabase, deleteFile);
+    })
+            .log("deleteImage-file");
+    return Mono.when(deleteDatabase, deleteFile)
+            .log("deleteImage-when")
+            .then()
+            .log("deleteImage-done");
   }
 
 
