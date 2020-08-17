@@ -51,9 +51,14 @@ public class InitComponent {
   @Profile("big")
   CommandLineRunner setUpBigList(ReactiveFluentMongoOperations operations) {
     return args -> operations.insert(Image.class)
-            .all(Stream.generate(() -> new Image(Instant.now().toString(), "ps-awesome.jpg" + Instant.now().getNano()))
+            .all(Stream.generate(() -> new Image(Instant.now().toString(),
+                    String.format("%s_%s.%s",
+                            "ps-awesome",
+                            Instant.now().getNano(),
+                            "jpg")))
                     .limit(1000000)
                     .collect(Collectors.toList()))
+            .log("insert big List")
             .subscribe();
   }
 }
