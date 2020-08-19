@@ -45,6 +45,9 @@ subprojects {
         extra["lombokVersion"] = "1.18.4"
         compileOnly("org.projectlombok:lombok:${extra["lombokVersion"]}")
         annotationProcessor("org.projectlombok:lombok:${extra["lombokVersion"]}")
+
+        implementation("org.springframework.boot:spring-boot-starter-webflux")
+        implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
         // mockito, JSONassert, hamcrest, Assertj
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
@@ -66,9 +69,14 @@ project(":chap02-webflux-with-thymeleaf") {
 
 project(":chap03-mongo") {
     dependencies {
-        implementation("org.springframework.boot:spring-boot-starter-webflux")
-        implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
         implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
         implementation("org.synchronoss.cloud:nio-multipart-parser:1.1.0")
+    }
+}
+
+project(":chap04-testing") {
+    dependencies {
+        testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
+        implementation("io.projectreactor:reactor-test")
     }
 }

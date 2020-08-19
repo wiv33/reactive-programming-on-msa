@@ -10,6 +10,7 @@
         </processorPath>
         <module name="reactive-programming-with-msa.chap02-webflux-with-thymeleaf.main" />
         <module name="reactive-programming-with-msa.chap03-mongo.main" />
+        <module name="reactive-programming-with-msa.chap04-testing.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="13" />
