@@ -93,7 +93,16 @@ project(":chap04-testing") {
         // tag::unsafe error[]
 
 //        https://stackoverflow.com/questions/52533878/mockito-error-in-spring-boot-tests-after-migrating-to-jdk-11
+        // tag::모키토 에러[]
+        /*
+        at org.springframework.boot.test.mock.mockito.MockDefinition.createMock(MockDefinition.java:157)
+        ...
+        Caused by: java.lang.UnsupportedOperationException: Cannot define class using reflection
+        ...
+        Caused by: java.lang.NoSuchMethodException: sun.misc.Unsafe.defineClass(java.lang.String,[B,int,int,java.lang.ClassLoader,java.security.ProtectionDomain)
+         */
         testImplementation("org.mockito:mockito-core:${extra["mockitoVersion"]}")
+        // end::Underlying exception : java.lang.UnsupportedOperationException: Cannot define class using reflection[]
 //        testImplementation("net.bytebuddy:byte-buddy:${extra["bytebuddyVersion"]}")
 //        testImplementation("net.bytebuddy:byte-buddy-agent:${extra["bytebuddyVersion"]}")
         // end::unsafe error[]
