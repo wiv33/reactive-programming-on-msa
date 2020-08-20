@@ -28,6 +28,7 @@ import java.util.stream.Stream;
  * @see
  * @since 20. 8. 21. Friday
  */
+// TODO DRY (Do not Repeat Yourself)
 @ExtendWith(SpringExtension.class)
 @DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
 public class LiveEmbeddedImageRepositoryTest {

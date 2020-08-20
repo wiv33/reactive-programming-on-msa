@@ -32,7 +32,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
  * @see
  * @since 20. 8. 20. Thursday
  */
-
+// TODO DRY (Do not Repeat Yourself)
 @ExtendWith(SpringExtension.class)
 @DataMongoTest
 class EmbeddedImageRepositoryTest {
