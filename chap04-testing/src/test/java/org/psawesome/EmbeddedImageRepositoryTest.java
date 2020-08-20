@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
+import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
@@ -81,12 +82,8 @@ class EmbeddedImageRepositoryTest {
     Hooks.onOperatorDebug();
     Hooks.onErrorDropped(throwable -> System.out.println(throwable.getMessage()));
 
-    StepVerifier.withVirtualTime(() -> operations.query(Image.class)
-            .matching(Query.query(where("name").regex("7")))
-            .all()
-            .delayElements(Duration.ofDays(10_000))
-//            .publishOn(Schedulers.elastic())
-            .log("publish on !"), 3)
+    StepVerifier.withVirtualTime(() -> imageFlux().delayElements(Duration.ofDays(10_000)).publishOn(Schedulers.elastic()).log("publish on !"),
+            3)
             .expectSubscription()
             .thenAwait(Duration.ofDays(10_000))
             .thenRequest(1)
@@ -101,17 +98,19 @@ class EmbeddedImageRepositoryTest {
     ;
   }
 
+  private Flux<Image> imageFlux() {
+    return operations.query(Image.class)
+            .matching(Query.query(where("name").regex("7")))
+            .all();
+  }
+
   @Test
   void testFindByNameShouldWork2() {
     Hooks.onOperatorDebug();
     Hooks.onErrorDropped(throwable -> System.out.println(throwable.getMessage()));
-
-    StepVerifier.withVirtualTime(() -> operations.query(Image.class)
-            .matching(Query.query(where("name").regex("7")))
-            .all()
-            .delaySubscription(Duration.ofDays(10_000))
-//            .publishOn(Schedulers.elastic())
-            .log("publish on !"), 3)
+    final Flux<Image> imageFlux = imageFlux();
+    StepVerifier.withVirtualTime(() -> imageFlux.delaySubscription(Duration.ofDays(10_000)).publishOn(Schedulers.elastic()).log("publish on !"),
+            3)
             .expectSubscription()
             .thenAwait(Duration.ofDays(10_000))
             .thenRequest(1)
