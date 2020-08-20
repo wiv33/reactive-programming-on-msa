@@ -1,5 +1,6 @@
 package org.psawesome;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,11 +11,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Hooks;
-import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,6 +52,13 @@ class EmbeddedImageRepositoryTest {
             .subscribe(System.out::println);
   }
 
+  @AfterEach
+  void tearDown() {
+    operations.remove(Image.class)
+            .all()
+            .subscribe(System.out::println);
+  }
+
   @Test
   void testReactor() {
     StepVerifier.create(operations.query(Image.class)
@@ -73,27 +79,48 @@ class EmbeddedImageRepositoryTest {
   @Test
   void testFindByNameShouldWork() {
     Hooks.onOperatorDebug();
+    Hooks.onErrorDropped(throwable -> System.out.println(throwable.getMessage()));
 
-    final Flux<Image> name = operations.query(Image.class)
+    StepVerifier.withVirtualTime(() -> operations.query(Image.class)
             .matching(Query.query(where("name").regex("7")))
             .all()
-            .delaySubscription(Duration.ofSeconds(10_000))
-            .publishOn(Schedulers.single())
-            ;
-
-    StepVerifier.withVirtualTime(name::log, 3)
+            .delayElements(Duration.ofDays(10_000))
+//            .publishOn(Schedulers.elastic())
+            .log("publish on !"), 3)
             .expectSubscription()
-            .expectNoEvent(Duration.ofSeconds(10_000))
-            .thenAwait(Duration.ofSeconds(100))
-            .expectNextCount(3)
+            .thenAwait(Duration.ofDays(10_000))
+            .thenRequest(1)
+            .expectNextCount(1)
+            .thenAwait(Duration.ofDays(10_000))
+            .expectNextCount(1)
+            .thenAwait(Duration.ofDays(10_000))
+            .expectNextCount(1)
+            .expectComplete()
+            .verifyThenAssertThat()
+            .tookLessThan(Duration.ofSeconds(10))
+    ;
+  }
+
+  @Test
+  void testFindByNameShouldWork2() {
+    Hooks.onOperatorDebug();
+    Hooks.onErrorDropped(throwable -> System.out.println(throwable.getMessage()));
+
+    StepVerifier.withVirtualTime(() -> operations.query(Image.class)
+            .matching(Query.query(where("name").regex("7")))
+            .all()
+            .delaySubscription(Duration.ofDays(10_000))
+//            .publishOn(Schedulers.elastic())
+            .log("publish on !"), 3)
+            .expectSubscription()
+            .thenAwait(Duration.ofDays(10_000))
+            .thenRequest(1)
+            .expectNextCount(1)
+            .thenRequest(2)
+            .expectNextCount(2)
             .expectComplete()
             .verify()
     ;
-
-/*
-    StepVerifier.create(name)
-            .expectNextCount(3)
-            .verifyComplete();
-*/
   }
+
 }
