@@ -60,7 +60,10 @@ class HomeControllerTest {
             .expectBody(String.class)
             .returnResult();
 
+//    imageService에서 findAllImages가 호출됐다는 것을 증명
     verify(imageService).findAllImages();
+//    이후 다른 호출이 없다는 것을 증명
+//    HomeController 주석 해제 시 fail 확인 가능
     verifyNoMoreInteractions(imageService);
 
     Assertions.assertTrue(result.getResponseBody()

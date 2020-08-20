@@ -28,6 +28,9 @@ public class HomeController {
   @GetMapping
   public Mono<String> homePage(Model model) {
     model.addAttribute("images", imageService.findAllImages());
+    // tag::주석해제 시 noInteractive test fail[]
+//    model.addAttribute("images", imageService.findAllImages());
+    // end::주석해제 시 noInteractive test fail[]
     return Mono.just("index");
   }
 }
