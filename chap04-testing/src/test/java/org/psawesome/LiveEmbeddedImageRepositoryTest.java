@@ -1,7 +1,6 @@
 package org.psawesome;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,7 +43,7 @@ public class LiveEmbeddedImageRepositoryTest {
   void setUp() {
     final AtomicLong atomicLong = new AtomicLong(0);
     operations.insert(Image.class)
-            .all(Stream.generate(() -> new Image(String.format("my_body_%d.jpg", atomicLong.getAndIncrement()))).limit(33).collect(Collectors.toList()))
+            .all(Stream.generate(() -> new Image(Instant.now().toString(), String.format("my_body_%d.jpg", atomicLong.getAndIncrement()))).limit(33).collect(Collectors.toList()))
             .publishOn(Schedulers.newElastic("psawesome"))
             .log("--insertAll-newElastic")
             .subscribe();

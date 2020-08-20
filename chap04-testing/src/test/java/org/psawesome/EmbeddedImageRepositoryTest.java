@@ -15,6 +15,7 @@ import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,7 +48,7 @@ class EmbeddedImageRepositoryTest {
   void setUp() {
     AtomicInteger integer = new AtomicInteger(0);
     operations.insert(Image.class)
-            .all(Stream.generate(() -> new Image(String.format("mybody_%d.jpg", integer.getAndIncrement())))
+            .all(Stream.generate(() -> new Image(Instant.now().toString(), String.format("mybody_%d.jpg", integer.getAndIncrement())))
                     .limit(30)
                     .collect(Collectors.toList()))
             .subscribe(System.out::println);

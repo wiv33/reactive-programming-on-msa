@@ -44,6 +44,7 @@ subprojects {
     dependencies {
         extra["lombokVersion"] = "1.18.4"
         extra["jupiterVersion"] = "5.6.2"
+
         compileOnly("org.projectlombok:lombok:${extra["lombokVersion"]}")
         annotationProcessor("org.projectlombok:lombok:${extra["lombokVersion"]}")
 
@@ -81,7 +82,21 @@ project(":chap03-mongo") {
 
 project(":chap04-testing") {
     dependencies {
+        extra["bytebuddyVersion"] = "1.8.22"
+        extra["mockitoVersion"] = "2.22.0"
+
         testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
         implementation("io.projectreactor:reactor-test")
+        implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
+
+        // tag::unsafe error[]
+
+//        https://stackoverflow.com/questions/52533878/mockito-error-in-spring-boot-tests-after-migrating-to-jdk-11
+        testImplementation("org.mockito:mockito-core:${extra["mockitoVersion"]}")
+//        testImplementation("net.bytebuddy:byte-buddy:${extra["bytebuddyVersion"]}")
+//        testImplementation("net.bytebuddy:byte-buddy-agent:${extra["bytebuddyVersion"]}")
+        // end::unsafe error[]
+
     }
 }

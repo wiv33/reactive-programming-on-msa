@@ -1,0 +1,8 @@
+logging:
+  level:
+    org:
+      psawesome: debug
+      springframework.data: debug
+    reactor:
+      core: trace
+      util: trace
