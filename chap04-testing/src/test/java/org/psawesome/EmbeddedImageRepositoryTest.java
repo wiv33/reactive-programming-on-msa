@@ -1,5 +1,6 @@
 package org.psawesome;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.ReactiveFluentMongoOperations;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,5 +53,13 @@ class EmbeddedImageRepositoryTest {
             .expectNextCount(30)
             .expectComplete()
             .verify();
+  }
+
+  @Test
+  void testFindAllShouldWork() {
+    final Flux<Image> all = imageRepository.findAll().log();
+    StepVerifier.create(all)
+            .expectNextCount(30)
+            .verifyComplete();
   }
 }
