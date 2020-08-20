@@ -43,7 +43,7 @@ subprojects {
 
     dependencies {
         extra["lombokVersion"] = "1.18.4"
-        extra["jupiterVersion"] = "5.6.3"
+        extra["jupiterVersion"] = "5.6.2"
         compileOnly("org.projectlombok:lombok:${extra["lombokVersion"]}")
         annotationProcessor("org.projectlombok:lombok:${extra["lombokVersion"]}")
 
@@ -54,7 +54,7 @@ subprojects {
             exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         }
         testImplementation("org.junit.jupiter:junit-jupiter-api:${extra["jupiterVersion"]}")
-        testImplementation("org.junit.jupiter:junit-jupiter-api:${extra["jupiterVersion"]}")
+        testImplementation("org.junit.jupiter:junit-jupiter-engine:${extra["jupiterVersion"]}")
     }
 
     tasks.withType<Test> {
