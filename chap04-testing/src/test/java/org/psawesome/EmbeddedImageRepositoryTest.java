@@ -40,13 +40,13 @@ class EmbeddedImageRepositoryTest {
             .all(Stream.generate(() -> new Image("mybody.jpg"))
                     .limit(30)
                     .collect(Collectors.toList()))
-            .subscribe();
+            .subscribe(System.out::println);
   }
 
   @Test
   void testReactor() {
     StepVerifier.create(operations.query(Image.class)
-            .all())
+            .all().log())
             .expectNextCount(30)
             .expectComplete()
             .verify();
