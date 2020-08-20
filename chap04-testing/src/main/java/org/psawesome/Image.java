@@ -1,10 +1,10 @@
 package org.psawesome;
 
 import lombok.Data;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * @author ps [https://github.com/wiv33/reactive-programming-with-msa]
@@ -19,8 +19,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
  */
 @Data
 @RequiredArgsConstructor
+@Document
 public class Image {
   @Id @Indexed
-  private final String id;
+  private String id;
   private final String name;
 }
