@@ -43,13 +43,18 @@ subprojects {
 
     dependencies {
         extra["lombokVersion"] = "1.18.4"
+        extra["jupiterVersion"] = "5.6.3"
         compileOnly("org.projectlombok:lombok:${extra["lombokVersion"]}")
         annotationProcessor("org.projectlombok:lombok:${extra["lombokVersion"]}")
 
         implementation("org.springframework.boot:spring-boot-starter-webflux")
         implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
         // mockito, JSONassert, hamcrest, Assertj
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("org.springframework.boot:spring-boot-starter-test") {
+            exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        }
+        testImplementation("org.junit.jupiter:junit-jupiter-api:${extra["jupiterVersion"]}")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:${extra["jupiterVersion"]}")
     }
 
     tasks.withType<Test> {
