@@ -1,7 +1,7 @@
 package org.psawesome;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +9,15 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfigurati
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.ReactiveFluentMongoOperations;
+import org.springframework.http.HttpMethod;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -72,7 +75,42 @@ class HomeControllerTest {
 //    HomeController 주석 해제 시 fail 확인 가능
     verifyNoMoreInteractions(imageService);
 
-    Assertions.assertTrue(result.getResponseBody()
+    assertTrue(result.getResponseBody()
             .contains("<title>Image Home page</title>"));
+  }
+
+
+  WebClient client = WebClient.builder().baseUrl("http://localhost:8080")
+          .build();
+
+  @Test
+  @DisplayName("반복 학습 코드")
+  void testPractice() {
+    var alpha = new Image("1", "psawesome_1.jpg");
+    var bravo = new Image("2", "psawesome_2.jpg");
+    given(imageService.findAllImages()).willReturn(Flux.just(alpha, bravo));
+
+    final FluxExchangeResult<String> result = webClient.get()
+            .uri("/").exchange()
+            .expectStatus().isOk()
+            .returnResult(String.class);
+
+    verify(imageService).findAllImages();
+    verifyNoMoreInteractions(imageService);
+
+    result.getResponseBody()
+            .log()
+            .buffer()
+            .subscribe(s -> {
+              final String body = s.stream().reduce((acc, el) -> acc += el.trim()).get();
+              assertAll(
+                      () -> assertEquals(HttpMethod.GET, result.getMethod()),
+                      () -> assertTrue(body.contains("<title>Image Home page</title>")),
+                      () -> assertTrue(body.contains("<td>psawesome_1.jpg</td>")),
+                      () -> assertTrue(body.contains("action=\"/images/psawesome_2.jpg\"><input type=\"hidden\" name=\"_method\" value=\"delete\"/>")),
+                      () -> assertTrue(body.contains("<img src=\"/images/psawesome_2.jpg/raw\"")),
+                      () -> assertTrue(body.contains("<body>"))
+              );
+            });
   }
 }
