@@ -82,8 +82,8 @@ class EmbeddedImageRepositoryTest {
     Hooks.onOperatorDebug();
     Hooks.onErrorDropped(throwable -> System.out.println(throwable.getMessage()));
 
-    StepVerifier.withVirtualTime(() -> imageFlux().delayElements(Duration.ofDays(10_000)).publishOn(Schedulers.elastic()).log("publish on !"),
-            3)
+    StepVerifier.withVirtualTime(() -> imageFlux()
+            .delayElements(Duration.ofDays(10_000)).log("publish on !"), 3)
             .expectSubscription()
             .thenAwait(Duration.ofDays(10_000))
             .thenRequest(1)
@@ -96,6 +96,31 @@ class EmbeddedImageRepositoryTest {
             .verifyThenAssertThat()
             .tookLessThan(Duration.ofSeconds(10))
     ;
+  }
+
+  @Test
+  void testElastic() {
+    {
+      Hooks.onOperatorDebug();
+      Hooks.onErrorDropped(throwable -> System.out.println(throwable.getMessage()));
+
+      StepVerifier.withVirtualTime(() -> imageFlux()
+              .delayElements(Duration.ofDays(10_000))
+              .publishOn(Schedulers.elastic())
+              .log("publish on !"), 3)
+              .expectSubscription()
+              .expectNoEvent(Duration.ofDays(10_000))
+              .thenAwait(Duration.ofDays(10_000))
+              .expectNextCount(1)
+              .thenAwait(Duration.ofDays(10_000))
+              .expectNextCount(1)
+              .thenAwait(Duration.ofDays(10_000))
+              .expectNextCount(1)
+              .expectComplete()
+              .verifyThenAssertThat()
+              .tookLessThan(Duration.ofSeconds(10))
+      ;
+    }
   }
 
   private Flux<Image> imageFlux() {
