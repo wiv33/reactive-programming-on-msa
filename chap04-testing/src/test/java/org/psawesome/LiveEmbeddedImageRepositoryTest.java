@@ -42,7 +42,7 @@ public class LiveEmbeddedImageRepositoryTest {
   void setUp() {
     final AtomicLong atomicLong = new AtomicLong(0);
     operations.insert(Image.class)
-            .all(Stream.generate(() -> new Image(String.format("my_body_%h.jpg", atomicLong))).limit(33).collect(Collectors.toList()))
+            .all(Stream.generate(() -> new Image(String.format("my_body_%d.jpg", atomicLong.getAndIncrement()))).limit(33).collect(Collectors.toList()))
             .publishOn(Schedulers.newElastic("psawesome"))
             .log("--insertAll-newElastic")
             .subscribe();
