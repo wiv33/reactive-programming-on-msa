@@ -101,16 +101,16 @@ class HomeControllerTest {
     result.getResponseBody()
             .log()
             .buffer()
-            .subscribe(s -> {
-              final String body = s.stream().reduce((acc, el) -> acc += el.trim()).get();
-              assertAll(
-                      () -> assertEquals(HttpMethod.GET, result.getMethod()),
-                      () -> assertTrue(body.contains("<title>Image Home page</title>")),
-                      () -> assertTrue(body.contains("<td>psawesome_1.jpg</td>")),
-                      () -> assertTrue(body.contains("action=\"/images/psawesome_2.jpg\"><input type=\"hidden\" name=\"_method\" value=\"delete\"/>")),
-                      () -> assertTrue(body.contains("<img src=\"/images/psawesome_2.jpg/raw\"")),
-                      () -> assertTrue(body.contains("<body>"))
-              );
-            });
+            .flatMap(s -> Flux.fromStream(s.stream()))
+            .reduce((acc, s) -> acc + s.trim())
+            .log()
+            .subscribe(body -> assertAll(
+                    () -> assertEquals(HttpMethod.GET, result.getMethod()),
+                    () -> assertTrue(body.contains("<title>Image Home page</title>")),
+                    () -> assertTrue(body.contains("<td>psawesome_1.jpg</td>")),
+                    () -> assertTrue(body.contains("action=\"/images/psawesome_2.jpg\"><input type=\"hidden\" name=\"_method\" value=\"delete\"/>")),
+                    () -> assertTrue(body.contains("<img src=\"/images/psawesome_2.jpg/raw\"")),
+                    () -> assertTrue(body.contains("<body>"))
+            ));
   }
 }
