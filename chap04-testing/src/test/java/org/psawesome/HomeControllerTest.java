@@ -137,7 +137,6 @@ class HomeControllerTest {
     verifyNoMoreInteractions(imageService);
 
     result.getResponseBody()
-            .flatMap(s -> Flux.fromStream(s.lines()))
             .buffer()
             .reduceWith(StringBuilder::new, (acc, str) -> acc.append(str.stream().reduce((a, b) -> a + b.trim())))
             .log()
