@@ -120,7 +120,7 @@ class HomeControllerTest {
 
   @ParameterizedTest(name = "[{index}] {argumentsWithNames}")
   @DisplayName("test practice code")
-  @ValueSource(strings = {"alpha", "bravo"})
+  @ValueSource(strings = {"alpha", "bravo", "transforms", "clip"})
   void testPracticeCode(String name) {
     final Image image = new Image(Instant.now().toString(), String.format("%s.jpg", name));
     given(imageService.findAllImages()).willReturn(Flux.just(image));
