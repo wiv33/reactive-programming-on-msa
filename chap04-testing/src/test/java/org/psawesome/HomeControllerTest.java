@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -17,10 +19,12 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
+import java.time.Instant;
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 /**
  * @author ps [https://github.com/wiv33/reactive-programming-with-msa]
@@ -75,7 +79,7 @@ class HomeControllerTest {
 //    HomeController 주석 해제 시 fail 확인 가능
     verifyNoMoreInteractions(imageService);
 
-    assertTrue(result.getResponseBody()
+    assertTrue(Objects.requireNonNull(result.getResponseBody())
             .contains("<title>Image Home page</title>"));
   }
 
@@ -112,5 +116,32 @@ class HomeControllerTest {
                     () -> assertTrue(body.contains("<img src=\"/images/psawesome_2.jpg/raw\"")),
                     () -> assertTrue(body.contains("<body>"))
             ));
+  }
+
+  @ParameterizedTest(name = "[{index}] {argumentsWithNames}")
+  @DisplayName("test practice code")
+  @ValueSource(strings = {"alpha", "bravo"})
+  void testPracticeCode(String name) {
+    final Image image = new Image(Instant.now().toString(), String.format("%s.jpg", name));
+    given(imageService.findAllImages()).willReturn(Flux.just(image));
+
+    when(imageService.findAllImages()).thenReturn(Flux.just(image));
+
+    final FluxExchangeResult<String> result = webClient.get()
+            .uri("/")
+            .exchange()
+            .expectStatus().isOk()
+            .returnResult(String.class);
+
+    verify(imageService).findAllImages();
+    verifyNoMoreInteractions(imageService);
+
+    result.getResponseBody()
+            .flatMap(s -> Flux.fromStream(s.lines()))
+            .buffer()
+            .reduceWith(StringBuilder::new, (acc, str) -> acc.append(str.stream().reduce((a, b) -> a + b.trim())))
+            .log()
+            .map(String::valueOf)
+            .subscribe(s -> assertTrue(s.contains(name)));
   }
 }
