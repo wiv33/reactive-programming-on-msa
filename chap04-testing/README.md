@@ -13,6 +13,9 @@ using selenium with chrome
 - ChromeDriverService.createDefaultService
 - new ChromeDriver()
 
+project build.gradle.kts
+-
+
 ```kotlin
     project(":chap04-testing") {
         dependencies {
