@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
@@ -21,6 +22,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -164,6 +166,26 @@ class HomeControllerTest {
             .isEqualTo("data");
 
     verify(imageService).findOneImage("alpha.png");
+    verifyNoMoreInteractions(imageService);
+  }
+
+  @ParameterizedTest(name = "[{index}] {argumentsWithNames}")
+  @DisplayName("파일이 없을 때 요청에 대한 응답")
+  @ValueSource(strings = {"alpha", "bravo", "clip"})
+  void fetchingNullImageShouldFail(String filename) throws IOException {
+    final Resource resource = mock(Resource.class);
+    given(resource.getInputStream()).willThrow(new IOException("bad file"));
+    given(imageService.findOneImage(any()))
+            .willReturn(Mono.just(resource));
+
+    testClient.get()
+            .uri(String.format("/images/%s/raw", filename))
+            .exchange()
+            .expectStatus().isBadRequest()
+            .expectBody(String.class)
+            .isEqualTo(String.format("couldn't find %s => bad file", filename));
+
+    verify(imageService).findOneImage(any());
     verifyNoMoreInteractions(imageService);
   }
 }
