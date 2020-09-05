@@ -5,14 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.interactions.Actions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,7 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-import static org.openqa.selenium.chrome.ChromeDriverService.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author ps [https://github.com/wiv33/reactive-programming-with-msa]
@@ -70,6 +65,12 @@ public class EndToEndTests {
   void testContextInit() throws IOException {
     driver.get("http://localhost:" + port);
     takeScreenshot("homePageShouldWork-1");
+
+    assertEquals(driver.getTitle(), "Image Home page");
+
+    final String pageContent = driver.getPageSource();
+
+    assertTrue(pageContent.contains("psawesome.png"));
 
   }
 
