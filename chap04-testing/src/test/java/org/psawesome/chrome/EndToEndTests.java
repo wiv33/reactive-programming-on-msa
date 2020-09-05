@@ -2,6 +2,7 @@ package org.psawesome.chrome;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
@@ -64,6 +65,7 @@ public class EndToEndTests {
   }
 
   @Test
+  @DisplayName("페이지 기능의 증명 - view, image data, delete function")
   void testContextInit() throws IOException {
     driver.get("http://localhost:" + port);
     takeScreenshot("homePageShouldWork-1");
