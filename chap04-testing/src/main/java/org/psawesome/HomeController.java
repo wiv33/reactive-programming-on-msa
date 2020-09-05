@@ -6,10 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -31,7 +28,7 @@ import java.io.IOException;
 public class HomeController {
 
   private static final String BASE_PATH = "/images";
-  private final String FILENAME = "{filename:.+}";
+  private static final String FILENAME = "{filename:.+}";
 
   private final ImageService imageService;
 
@@ -61,4 +58,9 @@ public class HomeController {
             });
   }
 
+  @DeleteMapping(BASE_PATH + "/" + FILENAME)
+  public Mono<String> deleteImage(@PathVariable String filename) {
+    return imageService.deleteImage(filename)
+            .then(Mono.just("redirect:/"));
+  }
 }

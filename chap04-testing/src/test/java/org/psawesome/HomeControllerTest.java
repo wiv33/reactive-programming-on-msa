@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
@@ -195,27 +196,22 @@ class HomeControllerTest {
 
   @Nested
   @DisplayName("HTTP DELETE")
-  class N {
-
-    @MockBean
-    private ImageService imageService;
+  class HttpDeleteTestClass {
 
     @ParameterizedTest(name = "[{index}] {argumentsWithNames}")
     @DisplayName("test should be delete image after redirect")
     @ValueSource(strings= {"alpha", "bravo", "clip"})
     void testShouldBeDeleteImageAfterRedirect(String filename) {
       given(imageService.deleteImage(any())).willReturn(Mono.empty());
-      AtomicInteger integer = new AtomicInteger(1);
 
-      final Image image = new Image(String.valueOf(integer.getAndIncrement()), filename);
-//      testClient
-    }
+      testClient.delete()
+              .uri(String.format("/images/%s.png", filename))
+              .exchange()
+              .expectStatus().isSeeOther()
+              .expectHeader().valueEquals(HttpHeaders.LOCATION, "/");
 
-
-    class MyParams {
-      String t1;
-      String t2;
-
+      verify(imageService).deleteImage(String.format("%s.png", filename));
+      verifyNoMoreInteractions(imageService);
     }
   }
 }
