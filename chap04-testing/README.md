@@ -23,7 +23,7 @@ project build.gradle.kts
             extra["mockitoVersion"] = "2.22.0"
     
             testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
-            implementation("io.projectreactor:reactor-test")
+            testImplementation("io.projectreactor:reactor-test")
             implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     
             testImplementation("org.mockito:mockito-core:${extra["mockitoVersion"]}")
