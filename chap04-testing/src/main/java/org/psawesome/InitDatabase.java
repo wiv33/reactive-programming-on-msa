@@ -30,7 +30,7 @@ public class InitDatabase {
     return args -> {
       operations.insert(Image.class)
               .all(List.of(
-                      new Image("1", "psawesome.png"),
+                      new Image("1", "psawesome.jpg"),
                       new Image("2", "alpha.jpg"),
                       new Image("3", "bravo.jpg")))
               .log()

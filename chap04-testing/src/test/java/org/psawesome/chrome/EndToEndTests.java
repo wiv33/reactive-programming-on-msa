@@ -1,13 +1,15 @@
 package org.psawesome.chrome;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.interactions.Actions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -70,8 +72,26 @@ public class EndToEndTests {
 
     final String pageContent = driver.getPageSource();
 
-    assertTrue(pageContent.contains("psawesome.png"));
+    assertAll(
+            () -> assertTrue(pageContent.contains("psawesome.jpg")),
+            () -> assertTrue(pageContent.contains("alpha.jpg")),
+            () -> assertTrue(pageContent.contains("bravo.jpg"))
+    );
 
+    final WebElement element = driver.findElement(By.cssSelector("[href*=\"alpha.jpg\"]"));
+
+    final Actions actions = new Actions(driver);
+    actions.moveToElement(element).click().perform();
+
+    takeScreenshot("homePageShouldWork-2");
+
+    driver.navigate().back();
+
+    final WebElement deleteElement = driver.findElement(By.cssSelector("[action*=\"psawesome.jpg\"]"));
+    actions.click(deleteElement).perform();
+
+    assertFalse(driver.getPageSource().contains("psawesome.jpg"));
+    takeScreenshot("homePageShouldWork-3");
   }
 
 
