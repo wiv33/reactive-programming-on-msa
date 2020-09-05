@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfigurati
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
@@ -18,11 +19,13 @@ import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -45,7 +48,7 @@ import static org.mockito.Mockito.*;
 class HomeControllerTest {
 
   @Autowired
-  WebTestClient webClient;
+  WebTestClient testClient;
 
   // tag::Error creating bean with name 'org.psawesome.HomeControllerTest': Unsatisfied dependency expressed through field 'operations'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.data.mongodb.core.ReactiveFluentMongoOperations' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
 //  @Autowired
@@ -54,6 +57,9 @@ class HomeControllerTest {
 
   @MockBean
   ImageService imageService;
+
+  @Autowired
+  HomeController controller;
 
   @BeforeEach
   void setUp() {
@@ -67,7 +73,7 @@ class HomeControllerTest {
     given(imageService.findAllImages())
             .willReturn(Flux.just(alpha, bravo));
 
-    final EntityExchangeResult<String> result = webClient.get().uri("/")
+    final EntityExchangeResult<String> result = testClient.get().uri("/")
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
@@ -94,7 +100,7 @@ class HomeControllerTest {
     var bravo = new Image("2", "psawesome_2.jpg");
     given(imageService.findAllImages()).willReturn(Flux.just(alpha, bravo));
 
-    final FluxExchangeResult<String> result = webClient.get()
+    final FluxExchangeResult<String> result = testClient.get()
             .uri("/").exchange()
             .expectStatus().isOk()
             .returnResult(String.class);
@@ -125,9 +131,9 @@ class HomeControllerTest {
     final Image image = new Image(Instant.now().toString(), String.format("%s.jpg", name));
     given(imageService.findAllImages()).willReturn(Flux.just(image));
 
-    when(imageService.findAllImages()).thenReturn(Flux.just(image));
+//    when(imageService.findAllImages()).thenReturn(Flux.just(image));
 
-    final FluxExchangeResult<String> result = webClient.get()
+    final FluxExchangeResult<String> result = testClient.get()
             .uri("/")
             .exchange()
             .expectStatus().isOk()
@@ -142,5 +148,22 @@ class HomeControllerTest {
             .log()
             .map(String::valueOf)
             .subscribe(s -> assertTrue(s.contains(name)));
+  }
+
+  @Test
+  @DisplayName("test should be fetching image")
+  void testShouldBeFetchingImage() {
+    when(imageService.findOneImage(any()))
+            .thenReturn(Mono.just(new ByteArrayResource("data".getBytes())));
+
+    testClient.get()
+            .uri("/images/alpha.png/raw")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(String.class)
+            .isEqualTo("data");
+
+    verify(imageService).findOneImage("alpha.png");
+    verifyNoMoreInteractions(imageService);
   }
 }
