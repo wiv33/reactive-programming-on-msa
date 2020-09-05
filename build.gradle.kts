@@ -57,6 +57,7 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-api:${extra["jupiterVersion"]}")
         testImplementation("org.junit.jupiter:junit-jupiter-engine:${extra["jupiterVersion"]}")
         testImplementation("org.junit.jupiter:junit-jupiter-params:${extra["jupiterVersion"]}")
+        testImplementation("org.synchronoss.cloud:nio-multipart-parser")
     }
 
     tasks.withType<Test> {
@@ -108,5 +109,19 @@ project(":chap04-testing") {
 //        testImplementation("net.bytebuddy:byte-buddy-agent:${extra["bytebuddyVersion"]}")
         // end::unsafe error[]
 
+
+        testImplementation("org.seleniumhq.selenium:htmlunit-driver")
+//        testImplementation("org.seleniumhq.selenium:selenium-chrome-driver")
+        testImplementation("org.seleniumhq.selenium:selenium-java")
+
+        // tag::NoSuchMethodError java.util.stream.Collector[]
+        /*
+        <groupId>net.oneandone.reflections8</groupId>
+        <artifactId>reflections8</artifactId>
+        <version>0.11.6</version>
+        */
+//        testImplementation("net.oneandone.reflections8:reflections8:0.11.6")
+        testImplementation("com.google.guava:guava:23.0")
+        // end::NoSuchMethodError java.util.stream.Collector[]
     }
 }
