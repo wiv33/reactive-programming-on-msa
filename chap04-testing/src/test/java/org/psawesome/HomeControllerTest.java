@@ -2,6 +2,7 @@ package org.psawesome;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,6 +26,7 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,6 +44,8 @@ import static org.mockito.Mockito.*;
  * @see
  * @since 20. 8. 21. Friday
  */
+
+@Nested
 @ExtendWith({
         SpringExtension.class
 })
@@ -187,5 +191,31 @@ class HomeControllerTest {
 
     verify(imageService).findOneImage(any());
     verifyNoMoreInteractions(imageService);
+  }
+
+  @Nested
+  @DisplayName("HTTP DELETE")
+  class N {
+
+    @MockBean
+    private ImageService imageService;
+
+    @ParameterizedTest(name = "[{index}] {argumentsWithNames}")
+    @DisplayName("test should be delete image after redirect")
+    @ValueSource(strings= {"alpha", "bravo", "clip"})
+    void testShouldBeDeleteImageAfterRedirect(String filename) {
+      given(imageService.deleteImage(any())).willReturn(Mono.empty());
+      AtomicInteger integer = new AtomicInteger(1);
+
+      final Image image = new Image(String.valueOf(integer.getAndIncrement()), filename);
+//      testClient
+    }
+
+
+    class MyParams {
+      String t1;
+      String t2;
+
+    }
   }
 }
