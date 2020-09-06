@@ -110,9 +110,14 @@ project(":chap04-testing") {
         // end::unsafe error[]
 
 
-        testImplementation("org.seleniumhq.selenium:htmlunit-driver")
+        implementation("org.seleniumhq.selenium:htmlunit-driver")
+        implementation("org.seleniumhq.selenium:selenium-java")
 //        testImplementation("org.seleniumhq.selenium:selenium-chrome-driver")
-        testImplementation("org.seleniumhq.selenium:selenium-java")
+
+        // tag::active @ConfigurationProperties[]
+//        https://docs.spring.io/spring-boot/docs/2.0.2.RELEASE/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor
+        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+        // end::active @ConfigurationProperties[]
 
         // tag::NoSuchMethodError java.util.stream.Collector[]
         /*

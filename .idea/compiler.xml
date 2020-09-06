@@ -10,6 +10,13 @@
         </processorPath>
         <module name="reactive-programming-with-msa.chap02-webflux-with-thymeleaf.main" />
         <module name="reactive-programming-with-msa.chap03-mongo.main" />
+      </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.4/7103ab519b1cdbb0642ad4eaf1db209d905d0f96/lombok-1.18.4.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-configuration-processor/2.0.2.RELEASE/f63ef9580fae50de818704e0fa549ce226cbb35/spring-boot-configuration-processor-2.0.2.RELEASE.jar" />
+        </processorPath>
         <module name="reactive-programming-with-msa.chap04-testing.main" />
       </profile>
     </annotationProcessing>

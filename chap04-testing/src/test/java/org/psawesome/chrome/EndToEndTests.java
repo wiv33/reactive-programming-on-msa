@@ -70,7 +70,7 @@ public class EndToEndTests {
     driver.get("http://localhost:" + port);
     takeScreenshot("homePageShouldWork-1");
 
-    assertEquals(driver.getTitle(), "Image Home page");
+    assertEquals("Image Home page", driver.getTitle());
 
     final String pageContent = driver.getPageSource();
 
